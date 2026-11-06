@@ -1,0 +1,16 @@
+{
+  "categories": [
+    "observation_grounding",
+    "execution_monitoring",
+    "uncertainty_compute"
+  ],
+  "entrypoint": "my_gate_v2.py",
+  "horizon": "The paper explicitly permits 1.8x each official task limit. Every recovery/calibration action counts.",
+  "models": [
+    "Frozen DAVIAN-Robotics/pi05-robocasa-H50 policy and local Qwen3.8-27B-FP8.",
+    "Qwen full-context configuration, released general lessons, no one-shot example and no paid GPT inference."
+  ],
+  "paid_api_calls_required": 0,
+  "scope": "Twenty-four reported RoboCasa tasks, five held-out-object split-B starts each; 240 physical episodes.",
+  "trainable_parameters": 0
+}

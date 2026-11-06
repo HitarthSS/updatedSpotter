@@ -1,0 +1,32 @@
+{
+  "bash_syntax_files": 3,
+  "checked_at_utc": "2026-11-06T20:50:50.812226+00:00",
+  "core_entrypoint": "my_gate_v2.py",
+  "core_matches_recorded_experiment": true,
+  "core_source_sha256": "1449bddd1473c0d8635e84e8f61c51e96000c76d45bca34cc96e00974eb6a014",
+  "cpu_tests": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "test_my_gate_v2",
+      "-v"
+    ],
+    "environment": "Existing Linux Guava evaluation environment; GPUs hidden; downloads disabled; local fake transport only",
+    "executed": true,
+    "passed": true,
+    "seconds": 0.167,
+    "skipped": 0,
+    "tests": 8
+  },
+  "full_gpu_benchmark_revalidated": false,
+  "limitations": [
+    "Syntax and CPU checks do not establish fresh-machine numerical parity or benchmark reproduction."
+  ],
+  "markdown_paths_checked": true,
+  "model_api_calls": 0,
+  "passed": true,
+  "publication_only": true,
+  "python_ast_files": 8,
+  "secret_patterns_checked": true
+}

@@ -1,0 +1,78 @@
+{
+  "authors": {
+    "environment_rpc_seconds": 7545.6549939999995,
+    "episodes": 120,
+    "input_tokens_known": 34481393,
+    "interventions": 56,
+    "judge_and_repair_requests": 646,
+    "output_tokens_known": 140514,
+    "requests_without_usage": 54,
+    "reused_windows": 0,
+    "screen_requests": 1000,
+    "success_percent": 66.67,
+    "success_wilson_95_percent": [
+      57.83,
+      74.47
+    ],
+    "successes": 80,
+    "successes_within_1_5x": 79,
+    "total_wall_seconds": 36096.1559652742,
+    "treatment_seconds": 28588,
+    "vlm_requests": 1646,
+    "vlm_service_request_seconds": 23862.726247813087
+  },
+  "completed_episodes": 240,
+  "frozen_version": "my harness v2",
+  "harmed": 2,
+  "helped": 5,
+  "horizon_violations": 0,
+  "initial_observable_state_mismatches": 0,
+  "mcnemar_exact_p": 0.453125,
+  "my": {
+    "environment_rpc_seconds": 7516.848177,
+    "episodes": 120,
+    "input_tokens_known": 30763466,
+    "interventions": 65,
+    "judge_and_repair_requests": 641,
+    "output_tokens_known": 129873,
+    "requests_without_usage": 83,
+    "reused_windows": 38,
+    "screen_requests": 1038,
+    "success_percent": 69.17,
+    "success_wilson_95_percent": [
+      60.42,
+      76.73
+    ],
+    "successes": 83,
+    "successes_within_1_5x": 81,
+    "total_wall_seconds": 34627.20676845052,
+    "treatment_seconds": 27136,
+    "vlm_requests": 1679,
+    "vlm_service_request_seconds": 22394.746242434718
+  },
+  "paired_completed": 120,
+  "paired_success_difference_95_percent": [
+    -2.5,
+    8.333333333333334
+  ],
+  "paper_full_evaluation": false,
+  "phase": "fresh paired pilot",
+  "target_pairs": 120,
+  "timing_on_uninterrupted_pairs": {
+    "authors": {
+      "environment_rpc_seconds": 7506.172431,
+      "total_wall_seconds": 36019.47927353624,
+      "treatment_seconds": 28569,
+      "vlm_service_request_seconds": 23862.726247813087
+    },
+    "excluded_restart_boundary_pairs": 1,
+    "my": {
+      "environment_rpc_seconds": 7475.567178,
+      "total_wall_seconds": 34521.90676845051,
+      "treatment_seconds": 27089,
+      "vlm_service_request_seconds": 22366.618711209856
+    },
+    "paired_cases": 119,
+    "shared_hardware": true
+  }
+}

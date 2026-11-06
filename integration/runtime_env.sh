@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Physical GPU 3 serves Qwen; physical GPU 6 serves pi0.5 and renders RoboCasa.
+set -euo pipefail
+R=/home/hitarth/spotter-reproduction
+cd "$R/Spotter"
+export COSMOS_POLICY_ROOT="$R/cosmos-runtime"
+export COSMOS_POLICY_ENV="$COSMOS_POLICY_ROOT/envs/robocasa"
+export COSMOS_COMMON_ENV="$COSMOS_POLICY_ROOT/scripts/common_env.sh"
+export ROBOCASA_BIN="$COSMOS_POLICY_ENV/bin"
+export PI05_PYTHON="$R/.venv-pi05-public/bin/python" PI05_CHECKPOINT="$R/checkpoints/pi05-robocasa-H50"
+export QWEN_MODEL="$R/checkpoints/Qwen3.8-27B-FP8"
+export MUJOCO_GL=egl PYOPENGL_PLATFORM=egl PYTHONUNBUFFERED=1
+export ENGINE=qwen MODEL=qwen38 QWEN_PORTS=8301 SCREENER_HOST=127.0.0.1
+export QWEN_REPAIR_THINK=0 QWEN_POINT_TILES=0
+export QWEN_KEEP_TURNS=20 COMPACT_AT=110000
+export STEP_BUDGET_SCALE=1.8 STEP_TOTAL=0 WINDOW=1 TEL_CHUNKS=10
+export ASYNC_SCREEN=2 ASYNC_K=2 SCREEN=1 SCREEN_CONFIRM2=1
+export MAX_INTERVENTIONS=8 INTERVENE_BUDGET=8 PLAN_ROUNDS=3 LATE_IV_FRAC=0
+export LEARN=0 FEWSHOT=0 ALLOW_RESET=0 MAX_RESETS=0 SPLIT=B
+export JUDGE_DEADLINE=1200 ACT_DEADLINE=2400 SVC_PORT_KILL=0
+export HF_HUB_DISABLE_IMPLICIT_TOKEN=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+# Local-only engine has no API fallback. Never pass any external-service credentials.
+unset OPENAI_API_KEY OPENAI_API_TOKEN_FILE OPENAI_RESPONSES_URL ANTHROPIC_API_KEY
+

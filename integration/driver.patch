@@ -1,0 +1,113 @@
+--- judge_driver_v7.sh
++++ judge_driver_my_v1.sh
+@@ -248,7 +248,7 @@
+         # or judge call that is still looking at an older window. Only this episode's calls match $CD.
+         if [ "$(printf '%s' "$A" | jget task_success)" = "True" ]; then
+           echo "$(date +%s.%N)" > "$CD/async/success"
+-          pkill -f "screen_window[.]py .*$CD/" 2>/dev/null; pkill -f "qwen_call[.]py .*$CD/" 2>/dev/null
++          pkill -f "screen_window_my_v1[.]py .*$CD/" 2>/dev/null; pkill -f "qwen_call[.]py .*$CD/" 2>/dev/null
+           pkill -f "gpt6_call[.]py .*$CD/" 2>/dev/null
+         fi
+         break
+@@ -1480,6 +1480,21 @@
+     # harness_advance has no top-level gripper_width (that is a call_cosmos key); the aperture is in telemetry.width_mm;
+     # jget used to return None -> 0 mm -> "gripper has closed" from the very start, making the PnP gate useless.
+     # "Attempted a grasp" = the policy issued a close command (cmd_gripper > 0.5) or the aperture was once below 30 mm.
++    # My harness: read public proprioception, never evaluator truth. Cache state is per episode.
++    MY_EXHAUSTED=0; [ "$NINT" -ge "$MAX_INTERVENTIONS" ] && MY_EXHAUSTED=1
++    MY_GAVEUP=$GAVEUP
++    [ "${MY_DROP_UNACTIONABLE:-1}" = 1 ] || { MY_EXHAUSTED=0; MY_GAVEUP=0; }
++    MY_OBS=$(python3 "$P/recovery_explore/cli/my_gate_v1.py" observe \
++      --state "$CD/my_gate_state.json" --telemetry "${TELF:-/dev/null}" --montage "${MONT:-/dev/null}" \
++      --step "${CTCHK:-0}" --budget "${MAXSTEPS:-0}" --kind "$MKIND" --grasp-count "${NGW:-0}" \
++      --interventions "$NINT" --verify "${VERIFY_PENDING:-0}" --gave-up "$MY_GAVEUP" \
++      --exhausted "$MY_EXHAUSTED" --cache "${MY_CACHE:-1}" --watchdog "${MY_WATCHDOG:-1}")
++    MY_FORCE=$(echo "$MY_OBS" | jget force_judge)
++    printf '%s\n' "$MY_OBS" > "$CD/my_gate_w$W.json"
++    if [ "${MY_FIX_PROPRIO:-1}" = 1 ]; then
++      GWMM=$(echo "$MY_OBS" | python3 -c 'import json,sys; print(int(float(json.load(sys.stdin).get("width_mm",99))))')
++      CLOSECMD=$(echo "$MY_OBS" | python3 -c 'import json,sys; print(int(bool(json.load(sys.stdin).get("close_seen",True))))')
++    else
+     GWMM=$(echo "$ADV" | python3 -c "
+ import json,sys
+ d=json.load(sys.stdin); t=d.get('telemetry') or {}
+@@ -1488,6 +1503,7 @@
+ import json,sys
+ d=json.load(sys.stdin); t=d.get('telemetry') or {}
+ print(1 if any(float(c.get('cmd_gripper') if c.get('cmd_gripper') is not None else -1)>0.5 for c in (t.get('chunks') or [])) else 0)" 2>/dev/null || echo 0)
++    fi
+     if [ "$GWMM" -lt 12 ]; then FLAGS="$FLAGS narrow aperture closed empty";
+     elif [ "$GWMM" -lt 45 ]; then FLAGS="$FLAGS mid-range aperture holding carrying transport object with the hand";
+     else FLAGS="$FLAGS gripper open"; fi
+@@ -1518,6 +1534,19 @@
+     OKW=$(echo "$ADV" | jget task_success); CT=$(echo "$ADV" | jget committed_timestep)
+     [ "$OKW" = "True" ] && { TS=True; log "  window $W policy completed the task on its own"; break; }
+     if [ "$DONE" = "True" ]; then log "  window $W reached the step limit, ending"; break; fi
++    MY_DECISION=$(echo "$MY_OBS" | jget decision)
++    MY_REASON=$(echo "$MY_OBS" | jget reason)
++    if [ "$MY_DECISION" = reuse ] || [ "$MY_DECISION" = handoff ]; then
++      SKIPPED="${SKIPPED:+$SKIPPED,}$W"; SKIPINFO="${SKIPINFO:+$SKIPINFO; }$W (my harness: $MY_REASON)"
++      log "  window $W my harness: $MY_DECISION ($MY_REASON); policy continues"
++      EVENTS=$(python3 - "$EVENTS" "$W" "$CT" "$MY_DECISION" "$MY_REASON" <<'MYEVENT'
++import json,sys
++events=json.loads(sys.argv[1]);events.append({'window':int(sys.argv[2]),'committed':int(sys.argv[3]),'judge':'my_'+sys.argv[4],'reason':sys.argv[5]});print(json.dumps(events))
++MYEVENT
++)
++      continue
++    fi
++    [ "$MY_FORCE" != True ] || log "  window $W my harness watchdog: $MY_REASON; request grounded review"
+     # --- PnP hard gate: do not judge until the policy has attempted a grasp ---
+     # Five rounds of data: 4 of 5 broken PnP episodes and all 5 wasted interventions happened before the policy had attempted a grasp;
+     # 11 of 12 rescues came after the first missed grasp. "Has grasped" = an empty closure was recorded, or the gripper once closed below 40 mm
+@@ -1548,7 +1577,7 @@
+     fi
+     # PNP_GATE_MAX_W: this gate applies only for the first N windows (default 999 = always, identical to before).
+     # Relaxed setting (RELAX=1) uses 5: a policy that keeps not grasping is itself a failure; after 5 windows the judge should look.
+-    if [ "$MKIND" = pnp ] && [ "$EVER_CLOSED" = 0 ] && [ "$W" -le "${PNP_GATE_MAX_W:-999}" ] && { [ "${NGRASP:-0}" = "0" ] || [ "${NGRASP:-0}" = "None" ]; }; then
++    if [ "$MY_FORCE" != True ] && [ "$MKIND" = pnp ] && [ "$EVER_CLOSED" = 0 ] && [ "$W" -le "${PNP_GATE_MAX_W:-999}" ] && { [ "${NGRASP:-0}" = "0" ] || [ "${NGRASP:-0}" = "None" ]; }; then
+       log "  window $W PnP gate: policy has not attempted a grasp yet, not judging"
+       EVENTS=$(python3 -c "
+ import json;l=json.loads('$EVENTS')
+@@ -1559,12 +1588,12 @@
+     # --- Tier 1: local screener ---
+     # fail-closed lives in screen_window.py: an exception / no connection / empty reply all return flag=true.
+     # Only the flag field counts here, and a missing one is treated as true -- a pass must be the screener's explicit answer, never a default.
+-    if [ "$SCREEN" = 1 ] && [ -n "$TELF" ] && [ -n "$MONT" ]; then
++    if [ "$MY_FORCE" != True ] && [ "$SCREEN" = 1 ] && [ -n "$TELF" ] && [ -n "$MONT" ]; then
+       # stderr goes to driver.log instead of being discarded -- that is where screener config errors used to be swallowed.
+       # The screener's empty-closure rule applies to PnP* tasks only and reads this window's
+       # chunks plus the one before; --task carries the instruction, so the task name and the
+       # row count are passed separately.
+-      SCR=$(SCREEN_TASK_NAME="$TASK" SCREEN_RULE_ROWS=$((WINDOW+1)) python3 $P/recovery_explore/cli/screen_window.py \
++      SCR=$(SCREEN_TASK_NAME="$TASK" SCREEN_RULE_ROWS=$((WINDOW+1)) python3 $P/recovery_explore/cli/screen_window_my_v1.py \
+         --montage "$MONT" --telemetry "$TELF" --task "$INSTR" \
+         --prev-flags "$SFLAGS" --host "$SCREENER_HOST" --tag "w$W" --family "$FAMILY" \
+         --out "$CD/screen_w$W.json" 2>>$OUT/lane$LANE/driver.log | tail -1)
+@@ -1611,6 +1640,9 @@
+ import json;l=json.loads('$EVENTS')
+ l.append({'window':$W,'committed':int('${CT:-0}'),'judge':'screened','risk':'${SRISK:-}'})
+ print(json.dumps(l))")
++        MY_SCREEN_CREDIT=invalid
++        case "$SRISK" in 0|1|2) MY_SCREEN_CREDIT=screen_pass ;; esac
++        python3 "$P/recovery_explore/cli/my_gate_v1.py" remember --state "$CD/my_gate_state.json" --source "$MY_SCREEN_CREDIT" >/dev/null
+         continue
+       fi
+       log "  window $W screener flagged (risk ${SRISK:-?}) -> calling $MODEL"
+@@ -1791,6 +1823,7 @@
+     echo "$JJ" > "$CD/verdict_w$W.json"
+     V=$(jfield "$JJ" verdict); V=${V:-ok}
+     case "$V" in ok|intervene|giveup) ;; *) log "  window $W invalid verdict ($V), treating as ok"; V=ok ;; esac
++    MY_RAW_VERDICT=$(jfield "$JJ" verdict)
+     if [ "$V" = "giveup" ]; then GAVEUP=1; log "  window $W verdict giveup -> no further interventions this episode"; V=ok; fi
+     USED=0; ATT=0; RSETS=0; RES=""; NPLAN=0; RETREATED=0
+     if [ "$MONITOR" = 1 ]; then
+@@ -2344,6 +2377,9 @@
+       [ "$ASYNC" != 0 ] || $H close-budget >/dev/null 2>&1
+       log "  window $W verdict $V"
+     fi
++    MY_CREDIT=invalid
++    if [ "$MY_RAW_VERDICT" = ok ] && [ "$V" = ok ] && [ "$MONITOR" = 0 ] && [ "$GAVEUP" = 0 ] && [ "$ATT" = 0 ]; then MY_CREDIT=judge_ok; fi
++    python3 "$P/recovery_explore/cli/my_gate_v1.py" remember --state "$CD/my_gate_state.json" --source "$MY_CREDIT" >/dev/null
+     EVENTS=$(python3 -c "
+ import json;l=json.loads('$EVENTS')
+ l.append({'window':$W,'committed':int('${CT:-0}'),'judge':'$V','actions_used':int('${USED:-0}'),'attempts':int('${ATT:-0}'),'resets':int('${RSETS:-0}'),'result':'${RES:-}','intervened_at':(int('${STALE}') if '${STALE:-}' not in ('','None') else None),'compactions':int('${COMPACTED_W:-0}'),'plan_segments':int('${NPLAN:-0}'),'retreated':int('${RETREATED:-0}'),'verify_blocked':int('${NVERIFY:-0}')})

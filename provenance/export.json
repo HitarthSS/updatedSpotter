@@ -1,0 +1,38 @@
+{
+  "excluded_from_self_hash": [
+    ".gitignore",
+    "provenance/export.json",
+    "provenance/validation.json"
+  ],
+  "files": {
+    "EVALUATION.md": "09bbf903c800fefab082745beacc25f5c0db29d27a2f0be3d48772befafea917",
+    "LICENSE": "bdad4c6087a3fea4f50fe2eb8bca565d5b25321eca79415ba015a23c99b7a6a2",
+    "NOTICE.md": "afcc52fc5e9dd4e4765e5f86dc09ada43a5be809ea95bc451bd24b0449fd272e",
+    "PUBLICATION.json": "a951587380cd0105aaad4d65340df8101dc2d69d45eef908756b70837a724c20",
+    "README.md": "242e95aad3580a29ada31e8c0f1d2a66ab91ec151eb21b2f35073b78240360ad",
+    "configs/method.json": "d2810ec4a62583b7730dbaceaa44fa78de0bb3a5c6b45c4360f2bf191f4d677d",
+    "docs/INTEGRATION.md": "1e76e3fdc202b3e733ae73184a579dc36fb94050bf233c6b26962525e608b97f",
+    "integration/driver.patch": "bc80b9499474500b127b561f0ef41aa2935fa22e7bc4cd976f1afffb2fb5db6b",
+    "integration/recovery_explore/judge_driver_final_authors.sh": "c996fabf1b8158cac7de3e4d049a45d4c5d28bc256b54ca0e6dd0f74f2d902ca",
+    "integration/recovery_explore/judge_driver_final_my.sh": "1befc6ed879f354fb9f3eaa091b659a2b2f07fa614a4cc92ab1b48a13fbbcbf2",
+    "integration/runtime_env.sh": "14a2dcc4f00538ecc2d1483be4c1179f870f98a909eb13fbea36d79f14888a53",
+    "integration/screen_window_my_v1.py": "2a59466c2058f9a2f9a70787de8b3931046d971c4616c4166ce0d2e96e4d7d89",
+    "licenses/UPSTREAM-LICENSE": "29828ade576068fe556ff146806aad2502cb19a3b59db3e4c6b3868dd104520f",
+    "my_gate_v1.py": "8544e4bc036b6971ed11eeb4f53126b82dc859367c4b460e7279ad00e72cd80e",
+    "my_gate_v2.py": "1449bddd1473c0d8635e84e8f61c51e96000c76d45bca34cc96e00974eb6a014",
+    "provenance/evaluated-models.json": "34ae9ee901d7640137a6ea3269036894f135d1053505b19beb704dee76d1e614",
+    "provenance/original-source-hashes.json": "ea9d92fce0f4d998db2b03278285f4192787b5f6af4b48004798a9540e72e9ea",
+    "provenance/upstream.json": "1c263efb4392917250ef9a81c25bec1ccb637068316b1b2c40369d5fb484ced8",
+    "reference/README.md": "73710e43ecb9584b021e55f76d9c08dd8acb72b19fad54cc439149cd05be9403",
+    "reference/experiment.py": "a628a6f8a3481f3e5dc8d5c86489bd5e64013d2ec01b0a4a30bb6febf950f3c7",
+    "reference/locks/policy.txt": "e49f3555f3011de626a08f517f902c957f4f00c7303391a9b0b24a33f6f35f03",
+    "reference/locks/simulator.txt": "1234e70294b40a29c52674a30ec4fb47a680007b6743dc40d5baa89821b58a5f",
+    "reference/run_managed_final.py": "92b40b9579ebf16562c8c1d4e9e1e9a329c8b094b955839497b0f39f6bf530d9",
+    "reference/test_experiment.py": "1f4e796d67971a9dbce6185a66bc63ed04d2b9f36d33c2d30d4b356ad6225fb5",
+    "results/interpretation.json": "392e963eb8b8b994c9fbe81e7954c926028cb1cf740a6bdcecbd207ebf8f8e8f",
+    "results/summary.json": "d1c7e42853daeec4f3f228856fe6f098a5f230615f998f2a42293f8042022ce8",
+    "test_my_gate_v2.py": "d911a1bf81899c83fc8bf0594392aec6715905ed3f18887e8dcfcb73ac039551",
+    "tools/verify_export.py": "c0f2a4ad4b66c20d59111f7a4005ac44d8ba4b795806cd8d8125fdff185bca2e"
+  },
+  "note": "Only exported files are covered. Existing upstream files are preserved. .gitignore is merged on the two existing repositories."
+}

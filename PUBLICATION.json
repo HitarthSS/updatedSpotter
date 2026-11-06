@@ -1,0 +1,10 @@
+{
+  "description": "My harness for Spotter \u2014 bounded supervision reuse; frozen-policy source, integration notes, horizons and qualified pilot results.",
+  "existing_repository": false,
+  "main_entrypoint": "my_gate_v2.py",
+  "new_visibility": "private",
+  "owner": "HitarthSS",
+  "paper": "https://arxiv.org/abs/2609.36808",
+  "repository": "updatedSpotter",
+  "requires_paid_api": false
+}

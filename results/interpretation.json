@@ -1,0 +1,19 @@
+{
+  "authors_harness": "80/120 (66.67%)",
+  "categories": [
+    "observation_grounding",
+    "execution_monitoring",
+    "uncertainty_compute"
+  ],
+  "full_paper_reproduction": false,
+  "horizon": "The paper explicitly permits 1.8x each official task limit. Every recovery/calibration action counts.",
+  "limitations": [
+    "Five helped and two harmed; exact McNemar p=0.4531; the success-difference interval includes zero.",
+    "Calls increased from 1,646 to 1,679. Missing usage records prevent a complete token-cost comparison.",
+    "A6000 FP8 kernels, dependencies and release revision differ from the historical paper environment.",
+    "A retrospective 1.5x cutoff is not a separate experiment with a 1.5x planning budget."
+  ],
+  "my_harness": "83/120 (69.17%)",
+  "paper_reference": "68.4%: pi0.5 + Qwen, full context",
+  "scope": "Twenty-four reported RoboCasa tasks, five held-out-object split-B starts each; 240 physical episodes."
+}

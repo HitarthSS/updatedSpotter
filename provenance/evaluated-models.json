@@ -1,0 +1,7 @@
+{
+  "documented_model_configuration": [
+    "Frozen DAVIAN-Robotics/pi05-robocasa-H50 policy and local Qwen3.8-27B-FP8.",
+    "Qwen full-context configuration, released general lessons, no one-shot example and no paid GPT inference."
+  ],
+  "weights_included": false
+}
